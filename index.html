@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Application Controller</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .app-card {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 32px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    h2 {
+      font-size: 1.5rem;
+      color: #38bdf8;
+      margin-bottom: 8px;
+    }
+    p {
+      color: #94a3b8;
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+    }
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .btn {
+      padding: 12px 24px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s, opacity 0.2s;
+    }
+    .btn-run {
+      background-color: #10b981;
+      color: #ffffff;
+    }
+    .btn-run:hover {
+      background-color: #059669;
+    }
+    .btn-run:disabled {
+      background-color: #475569;
+      cursor: not-allowed;
+    }
+    .btn-close {
+      background-color: #ef4444;
+      color: #ffffff;
+    }
+    .btn-close:hover {
+      background-color: #dc2626;
+    }
+    .output-section label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+    .output-box {
+      background-color: #020617;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 16px;
+      min-height: 120px;
+      max-height: 250px;
+      overflow-y: auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9rem;
+      color: #38bdf8;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-card" id="appContainer">
+    <h2>Task Execution Control Panel</h2>
+    <p>Trigger background code execution and observe the output below.</p>
+
+    <!-- Two Action Buttons -->
+    <div class="button-group">
+      <button class="btn btn-run" id="runBtn">▶ Run Code</button>
+      <button class="btn btn-close" id="closeBtn">✖ Close App</button>
+    </div>
+
+    <!-- Output Box Area -->
+    <div class="output-section">
+      <label>Execution Output:</label>
+      <div class="output-box" id="outputArea">Waiting for action... Click "Run Code" above.</div>
+    </div>
+  </div>
+
+  <!-- Load your actual code file -->
+  <script src="my_code.js"></script>
+
+  <!-- UI Trigger Script -->
+  <script>
+    const runBtn = document.getElementById("runBtn");
+    const closeBtn = document.getElementById("closeBtn");
+    const outputArea = document.getElementById("outputArea");
+    const appContainer = document.getElementById("appContainer");
+
+    // 1. Trigger the actual code
+    runBtn.addEventListener("click", async () => {
+      runBtn.disabled = true;
+      outputArea.textContent = "Executing actual code in background... Please wait.";
+
+      try {
+        // Calls the function written inside my_code.js
+        const executionResult = await runActualTask();
+        outputArea.textContent = executionResult;
+      } catch (error) {
+        outputArea.textContent = "Error executing code: " + error.message;
+      } finally {
+        runBtn.disabled = false;
+      }
+    });
+
+    // 2. Close Application logic
+    closeBtn.addEventListener("click", () => {
+      const confirmClose = confirm("Are you sure you want to close this application?");
+      if (confirmClose) {
+        // Try closing the window/tab
+        window.close();
+        
+        // Fallback for browsers that block window.close() on non-script opened tabs
+        appContainer.innerHTML = `
+          <h2 style="color: #94a3b8;">Application Closed</h2>
+          <p>You can safely close this browser tab.</p>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>
